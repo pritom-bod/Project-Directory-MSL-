@@ -192,7 +192,7 @@ export default function Home() {
           <div className="bg-white rounded-xl shadow-lg overflow-hidden">
             <div className="overflow-x-auto">
               <table className="w-full border-collapse">
-                <thead className="bg-indigo-600 text-white">
+                <thead className="bg-blue-900 text-white">
                   <tr>
                     <th className="px-6 py-4 text-left text-sm font-semibold">Project Name</th>
                     <th className="px-6 py-4 text-left text-sm font-semibold">Deadline</th>
