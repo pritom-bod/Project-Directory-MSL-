@@ -2,11 +2,11 @@
 import { useEffect, useState } from "react";
 
 const SHEETS = {
-  Home: "https://docs.google.com/spreadsheets/d/1_gGJNXiELyFzpy9EZWdtByCfAl4nEiQw86Qx_43xZtk/gviz/tq?tqx=out:json&gid=0",
-  ProposalPrep: "https://docs.google.com/spreadsheets/d/1_gGJNXiELyFzpy9EZWdtByCfAl4nEiQw86Qx_43xZtk/gviz/tq?tqx=out:json&gid=1334009693",
-  EoiPrep: "https://docs.google.com/spreadsheets/d/1_gGJNXiELyFzpy9EZWdtByCfAl4nEiQw86Qx_43xZtk/gviz/tq?tqx=out:json&gid=1699098666",
-  EoiEval: "https://docs.google.com/spreadsheets/d/1_gGJNXiELyFzpy9EZWdtByCfAl4nEiQw86Qx_43xZtk/gviz/tq?tqx=out:json&gid=767379216",
-  ProposalEval: "https://docs.google.com/spreadsheets/d/1_gGJNXiELyFzpy9EZWdtByCfAl4nEiQw86Qx_43xZtk/gviz/tq?tqx=out:json&gid=1529072389",
+  Home: "https://docs.google.com/spreadsheets/d/1jAH2IlhBqZCwRBVJRogC-YX1v9sVxW1iWI_jy3azv_8/gviz/tq?tqx=out:json&gid=0",
+  ProposalPrep: "https://docs.google.com/spreadsheets/d/1jAH2IlhBqZCwRBVJRogC-YX1v9sVxW1iWI_jy3azv_8/gviz/tq?tqx=out:json&gid=1334009693",
+  EoiPrep: "https://docs.google.com/spreadsheets/d/1jAH2IlhBqZCwRBVJRogC-YX1v9sVxW1iWI_jy3azv_8/gviz/tq?tqx=out:json&gid=1699098666",
+  EoiEval: "https://docs.google.com/spreadsheets/d/1jAH2IlhBqZCwRBVJRogC-YX1v9sVxW1iWI_jy3azv_8/gviz/tq?tqx=out:json&gid=767379216",
+  ProposalEval: "https://docs.google.com/spreadsheets/d/1jAH2IlhBqZCwRBVJRogC-YX1v9sVxW1iWI_jy3azv_8/gviz/tq?tqx=out:json&gid=1529072389",
 };
 
 const fieldLabels = [
