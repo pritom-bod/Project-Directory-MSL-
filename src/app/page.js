@@ -276,7 +276,7 @@ export default function Home() {
         <nav className="bg-white shadow-md fixed top-0 left-0 w-full z-50 py-2 sm:py-3">
           <div className="max-w-7xl mx-auto px-2 sm:px-4 lg:px-8 flex items-center justify-between">
             <div className="flex items-center">
-              <img src="max.png" alt="Logo" className="h-10 sm:h-12 md:h-16 mr-2 sm:mr-4" />
+              <img src="max.png" alt="Logo" className="h-12 sm:h-12 md:h-18 mr-2 sm:mr-4" />
             </div>
             <button
               onClick={handleBack}
