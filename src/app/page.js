@@ -56,6 +56,7 @@ const proposalPreparationFields = [
   "Sector",
   "Donor Name",
   "Client Name",
+  "Lead",
   "Partner",
   "Deadline",
   "Project Code",
@@ -77,6 +78,7 @@ const eoiPreparationFields = [
   "Sector",
   "Donor Name",
   "Client Name",
+  "Lead",
   "Partner",
   "Deadline",
   "Project Code",
@@ -273,9 +275,9 @@ export default function Home() {
       <header className="bg-white shadow-sm sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-2 sm:px-4 lg:px-8 py-3 sm:py-4 flex items-center justify-between">
           <div className="flex items-center">
-            <img src="max.png" alt="Logo" className="h-8 sm:h-12 md:h-16" /> {/* Adjusted for better scaling */}
+            <img src="max.png" alt="Logo" className="h-10 sm:h-12 md:h-16" />
             <div className="flex-grow flex items-center justify-center">
-              <h1 className="text-xl sm:text-2xl lg:text-4xl font-bold text-blue-900 dark:text-blue-800 text-center">
+              <h1 className="text-xl sm:text-5xl ml-10 sm:ml-10 sm:text-center lg:text-4xl font-bold text-blue-900 dark:text-blue-800 text-center">
                 Project
                 <span className="text-red-700 dark:text-red-800"> Dashboard</span>
                 {/* <span className="font-bold text-blue-900 dark:text-blue-800"> LTD.</span> */}
@@ -294,14 +296,17 @@ export default function Home() {
           )}
         </div>
       </header>
+          <br></br>
+    
       {/* Menu View (Buttons) */}
       {view === "menu" && (
-        <div className="max-w-7xl mx-auto px-2 sm:px-4 lg:px-8 py-6 sm:py-8 flex flex-wrap justify-center gap-3 sm:gap-4">
+        
+        <div className="max-w-7xl mx-auto px-2 sm:px-4 lg:px-8 py-6 sm:py-8 flex flex-wrap justify-center gap-7 sm:gap-6">
           {Object.keys(SHEETS).map((key) => (
             <button
               key={key}
               onClick={() => handleButtonClick(key)}
-              className="px-4 sm:px-6 py-2 sm:py-3 rounded-lg font-medium text-xs sm:text-sm transition-all duration-200 bg-blue-900 text-white hover:bg-blue-950 shadow-sm w-full sm:w-auto min-w-[200px] sm:min-w-0"
+              className="px-6 sm:px-8 py-3 sm:py-4 rounded-lg font-medium text-l sm:text-base transition-all duration-200 bg-blue-900 text-white hover:bg-blue-950 shadow-sm w-full sm:w-auto min-w-[200px] sm:min-w-0"
             >
               {buttonLabels[key]}
             </button>
@@ -310,68 +315,82 @@ export default function Home() {
       )}
       {/* Table View */}
       {view === "table" && (
-        <main className="max-w-7xl mx-auto px-2 sm:px-4 lg:px-8 py-4 sm:py-8">
-          {loading && (
-            <div className="flex justify-center items-center py-8">
-              <div className="text-center">
-                <div className="animate-spin rounded-full h-6 w-6 sm:h-8 sm:w-8 border-b-2 border-indigo-600 mx-auto mb-3 sm:mb-4"></div>
-                <p className="text-gray-600 text-sm sm:text-base">Loading data...</p>
-              </div>
-            </div>
-          )}
-          {error && (
-            <div className="bg-red-50 border border-red-200 rounded-lg p-3 sm:p-4 mb-4 sm:mb-6">
-              <div className="flex items-start sm:items-center">
-                <span className="text-red-600 mr-2 flex-shrink-0">⚠️</span>
-                <p className="text-red-800 text-sm sm:text-base flex-1">{error}</p>
-              </div>
-              <p className="text-red-700 text-xs sm:text-sm mt-2">Ensure the sheet is shared with &apos;Anyone with the link&apos; (Viewer) and verify tab names.</p>
-            </div>
-          )}
-          {!loading && !error && data.length === 0 && (
-            <div className="text-center py-12">
-              <p className="text-gray-500 text-lg sm:text-lg">No data available for this sheet.</p>
-            </div>
-          )}
-          {!loading && !error && data.length > 0 && (
-            <div className="bg-white rounded-xl shadow-lg overflow-hidden">
-              <div className="overflow-x-auto">
-                <table className="w-full border-collapse min-w-[300px]">
-                  <thead className="bg-blue-900 text-white">
-                    <tr>
-                      <th className="px-2 sm:px-4 lg:px-6 py-2 sm:py-3 text-left text-xs sm:text-sm font-semibold whitespace-nowrap">Project Name</th>
-                      <th className="px-2 sm:px-4 lg:px-6 py-2 sm:py-3 text-left text-xs sm:text-sm font-semibold whitespace-nowrap">Deadline</th>
-                      <th className="px-2 sm:px-4 lg:px-6 py-2 sm:py-3 text-left text-xs sm:text-sm font-semibold whitespace-nowrap">Country</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {data.map((item, i) => (
-                      <tr
-                        key={i}
-                        onClick={() => handleRowClick(item)}
-                        className="border-b border-gray-200 hover:bg-gray-50 transition-colors cursor-pointer"
-                      >
-                        <td className="px-2 sm:px-4 lg:px-6 py-2 sm:py-3 text-gray-800 text-sm whitespace-normal break-words max-w-xs sm:max-w-none">{item["Project Name"]}</td>
-                        <td className="px-2 sm:px-4 lg:px-6 py-2 sm:py-3 text-gray-600 text-sm whitespace-nowrap">{item["Deadline"]}</td>
-                        <td className="px-2 sm:px-4 lg:px-6 py-2 sm:py-3 text-gray-600 text-sm whitespace-nowrap">{item["Country"]}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          )}
-        </main>
-      )}
+  <main className="max-w-7xl mx-auto px-2 sm:px-4 lg:px-8 py-4 sm:py-8">
+    {loading && (
+      <div className="flex justify-center items-center py-8">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-6 w-6 sm:h-8 sm:w-8 border-b-2 border-indigo-600 mx-auto mb-3 sm:mb-4"></div>
+          <p className="text-gray-600 text-sm sm:text-base">Loading data...</p>
+        </div>
+      </div>
+    )}
+    {error && (
+      <div className="bg-red-50 border border-red-200 rounded-lg p-3 sm:p-4 mb-4 sm:mb-6">
+        <div className="flex items-start sm:items-center">
+          <span className="text-red-600 mr-2 flex-shrink-0">⚠️</span>
+          <p className="text-red-800 text-sm sm:text-base flex-1">{error}</p>
+        </div>
+        <p className="text-red-700 text-xs sm:text-sm mt-2">Ensure the sheet is shared with &apos;Anyone with the link&apos; (Viewer) and verify tab names.</p>
+      </div>
+    )}
+    {!loading && !error && data.length === 0 && (
+      <div className="text-center py-12">
+        <p className="text-gray-500 text-lg sm:text-lg">No data available for this sheet.</p>
+      </div>
+    )}
+    {!loading && !error && data.length > 0 && (
+      <div className="bg-white rounded-xl shadow-lg overflow-hidden">
+        <div className="overflow-x-auto">
+          <table className="w-full border-collapse min-w-[300px]">
+            <thead className="bg-blue-900 text-white">
+              <tr>
+                <th className="px-2 sm:px-4 py-2 sm:py-3 text-left text-xs sm:text-sm font-semibold whitespace-nowrap">Project Name</th>
+                <th className="px-2 sm:px-4 py-2 sm:py-3 text-left text-xs sm:text-sm font-semibold whitespace-nowrap">Deadline</th>
+                <th className="px-2 sm:px-4 py-2 sm:py-3 text-left text-xs sm:text-sm font-semibold whitespace-nowrap">Country</th>
+              </tr>
+            </thead>
+            <tbody>
+              {data.map((item, i) => (
+                <tr
+                  key={i}
+                  onClick={() => handleRowClick(item)}
+                  className="border-b border-gray-200 hover:bg-gray-50 transition-colors cursor-pointer"
+                >
+                  <td className="px-2 sm:px-4 py-2 sm:py-3 text-gray-800 text-sm whitespace-normal break-words flex-grow max-w-[60%] sm:max-w-none">
+                    {item["Project Name"]}
+                  </td>
+                  <td className="px-2 sm:px-4 py-2 sm:py-3 text-gray-600 text-sm whitespace-nowrap flex-shrink-0 w-[20%] sm:w-auto">
+                    {item["Deadline"]}
+                  </td>
+                  <td className="px-2 sm:px-4 py-2 sm:py-3 text-gray-600 text-sm">
+                    <div className="flex flex-col gap-1">
+                      {item["Country"]
+                        .split(",")
+                        .map((country, index) => (
+                          <span key={index} className="block">
+                            {country.trim()}
+                          </span>
+                        ))}
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    )}
+  </main>
+)}
       {/* Detail View */}
       {view === "detail" && selectedRow && (
         <main className="max-w-7xl mx-auto px-2 sm:px-4 lg:px-8 py-4 sm:py-8">
           <div className="bg-white rounded-xl shadow-lg p-4 sm:p-6">
-            <h2 className="text-xl sm:text-2xl font-bold text-gray-800 mb-4 sm:mb-6">Project Details: {selectedRow["Project Name"]}</h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-4 overflow-x-auto">
+            <h2 className="text-xl sm:text-2xl sm:text-center ml-28 sm:ml-24 font-bold text-red-800 mb-4 sm:mb-6">Project Details</h2>
+            <div className="space-y-4">
               {currentFields.map((label) => (
-                <div key={label} className="flex items-start space-x-2 mb-2 min-w-0">
-                  <span className="text-indigo-600 font-medium whitespace-nowrap flex-shrink-0 text-sm sm:text-base min-w-fit">
+                <div key={label} className="flex flex-col space-y-1">
+                  <span className="font-medium whitespace-nowrap text-blue-800 text-m sm:text-base">
                     {label}:
                   </span>
                   <span className="text-gray-700 flex-1 break-words hyphens-auto text-sm sm:text-base">
