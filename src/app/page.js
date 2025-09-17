@@ -277,7 +277,7 @@ export default function Home() {
           <div className="flex items-center">
             <img src="max.png" alt="Logo" className="h-10 sm:h-12 md:h-16" />
             <div className="flex-grow flex items-center justify-center">
-              <h1 className="text-xl sm:text-5xl ml-10 sm:ml-10 sm:text-center lg:text-4xl font-bold text-blue-900 dark:text-blue-800 text-center">
+              <h1 className="text-xl sm:text-5xl ml-9 sm:ml-9 sm:text-center lg:text-4xl font-bold text-blue-900 dark:text-blue-800 text-center">
                 Project
                 <span className="text-red-700 dark:text-red-800"> Dashboard</span>
                 {/* <span className="font-bold text-blue-900 dark:text-blue-800"> LTD.</span> */}
