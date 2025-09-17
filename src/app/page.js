@@ -360,19 +360,20 @@ export default function Home() {
       )}
       {/* Detail View */}
       {view === 'detail' && selectedRow && (
-        <main className="max-w-7xl mx-auto px-2 sm:px-4 lg:px-8 py-4 sm:py-8">
-          <div className="bg-white rounded-xl shadow-lg p-4 sm:p-6">
-            <h2 className="text-xl sm:text-2xl font-bold text-gray-800 mb-4 sm:mb-6">Project Details: {selectedRow["Project Name"]}</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4 overflow-x-auto">
-              {currentFields.map((label) => (
-                <div key={label} className="flex items-start sm:items-center space-x-2 min-w-0">
-                  <span className="text-indigo-600 font-medium whitespace-nowrap flex-shrink-0 text-sm sm:text-base min-w-fit">{label}:</span>
-                  <span className="text-gray-700 flex-1 text-sm sm:text-base break-words hyphens-none">{selectedRow[label]}</span>
-                </div>
-              ))}
-            </div>
+  <main className="max-w-7xl mx-auto px-2 sm:px-4 lg:px-8 py-4 sm:py-8">
+    <div className="bg-white rounded-xl shadow-lg p-4 sm:p-6">
+      <h2 className="text-xl sm:text-2xl font-bold text-gray-800 mb-4 sm:mb-6">Project Details: {selectedRow["Project Name"]}</h2>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4 overflow-x-auto">
+        {/* eslint-disable-next-line react/no-unescaped-entities */}
+        {currentFields.map((label) => (
+          <div key={label} className="flex items-start sm:items-center space-x-2 min-w-0">
+            <span className="text-indigo-600 font-medium whitespace-nowrap flex-shrink-0 text-sm sm:text-base min-w-fit">{label}:</span>
+            <span className="text-gray-700 flex-1 text-sm sm:text-base break-words hyphens-none">{selectedRow[label]}</span>
           </div>
-        </main>
+        ))}
+      </div>
+    </div>
+  </main>
       )}
     </div>
   );
