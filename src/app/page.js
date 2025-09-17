@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 
 const SHEETS = {
-  //Home: "https://docs.google.com/spreadsheets/d/1jAH2IlhBqZCwRBVJRogC-YX1v9sVxW1iWI_jy3azv_8/gviz/tq?tqx=out:json&gid=0",
+  // Home: "https://docs.google.com/spreadsheets/d/1jAH2IlhBqZCwRBVJRogC-YX1v9sVxW1iWI_jy3azv_8/gviz/tq?tqx=out:json&gid=0",
   ProposalPrep: "https://docs.google.com/spreadsheets/d/1jAH2IlhBqZCwRBVJRogC-YX1v9sVxW1iWI_jy3azv_8/gviz/tq?tqx=out:json&gid=1334009693",
   EoiPrep: "https://docs.google.com/spreadsheets/d/1jAH2IlhBqZCwRBVJRogC-YX1v9sVxW1iWI_jy3azv_8/gviz/tq?tqx=out:json&gid=1699098666",
   EoiEval: "https://docs.google.com/spreadsheets/d/1jAH2IlhBqZCwRBVJRogC-YX1v9sVxW1iWI_jy3azv_8/gviz/tq?tqx=out:json&gid=767379216",
@@ -132,7 +132,7 @@ const dateFields = ["Deadline", "Clarification Deadline"];
 
 function formatDate(raw) {
   let date;
-  if (typeof raw === 'string' && raw.startsWith('Date(')) {
+  if (typeof raw === "string" && raw.startsWith("Date(")) {
     const match = raw.match(/Date\((\d+),(\d+),(\d+)\)/);
     if (match) {
       date = new Date(parseInt(match[1]), parseInt(match[2]), parseInt(match[3]));
@@ -141,10 +141,10 @@ function formatDate(raw) {
     date = new Date(raw);
   }
   if (!isNaN(date.getTime())) {
-    return date.toLocaleDateString('en-GB', {
-      day: '2-digit',
-      month: 'short',
-      year: 'numeric',
+    return date.toLocaleDateString("en-GB", {
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
     });
   }
   return raw || "";
@@ -153,7 +153,7 @@ function formatDate(raw) {
 async function fetchWithRetry(url, retries = 3, delay = 1000) {
   for (let i = 0; i < retries; i++) {
     try {
-      const res = await fetch(url, { cache: 'no-store', mode: 'cors' });
+      const res = await fetch(url, { cache: "no-store", mode: "cors" });
       if (!res.ok) {
         const errorText = await res.text();
         throw new Error(`HTTP error! Status: ${res.status}, Details: ${errorText}`);
@@ -162,18 +162,18 @@ async function fetchWithRetry(url, retries = 3, delay = 1000) {
       const parsedText = text.substr(47).slice(0, -2);
       const json = JSON.parse(parsedText);
       if (!json.table || !json.table.rows || !json.table.cols) {
-        throw new Error('Invalid response: No table data found');
+        throw new Error("Invalid response: No table data found");
       }
       return json;
     } catch (err) {
-      console.error('Fetch attempt failed:', {
+      console.error("Fetch attempt failed:", {
         attempt: i + 1,
-        message: err.message || 'Unknown error',
-        stack: err.stack || 'No stack trace',
+        message: err.message || "Unknown error",
+        stack: err.stack || "No stack trace",
         rawError: JSON.stringify(err, Object.getOwnPropertyNames(err)),
       });
       if (i < retries - 1) {
-        await new Promise(resolve => setTimeout(resolve, delay));
+        await new Promise((resolve) => setTimeout(resolve, delay));
         continue;
       }
       throw err;
@@ -185,7 +185,7 @@ export default function Home() {
   const [activeSheet, setActiveSheet] = useState(null);
   const [data, setData] = useState([]);
   const [selectedRow, setSelectedRow] = useState(null);
-  const [view, setView] = useState('menu'); // 'menu', 'table', 'detail'
+  const [view, setView] = useState("menu"); // 'menu', 'table', 'detail'
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
@@ -197,10 +197,10 @@ export default function Home() {
       try {
         const url = SHEETS[activeSheet];
         if (!url) {
-          throw new Error('Invalid sheet tab selected');
+          throw new Error("Invalid sheet tab selected");
         }
         const json = await fetchWithRetry(url);
-        const headers = json.table.cols.map((c) => c.label || '').map(h => h.trim());
+        const headers = json.table.cols.map((c) => c.label || "").map((h) => h.trim());
         const rows = json.table.rows.map((r) => {
           const rowData = {};
           const fieldLabels = fieldLabelsMap[activeSheet] || allFields;
@@ -212,17 +212,19 @@ export default function Home() {
             }
           });
           return rowData;
-        }).filter(row => Object.values(row).some(val => val !== ""));
+        }).filter((row) => Object.values(row).some((val) => val !== ""));
         setData(rows);
       } catch (err) {
-        console.error('Error fetching sheet data:', {
-          message: err.message || 'Unknown error',
-          url: SHEETS[activeSheet] || 'Unknown URL',
+        console.error("Error fetching sheet data:", {
+          message: err.message || "Unknown error",
+          url: SHEETS[activeSheet] || "Unknown URL",
           activeSheet,
-          stack: err.stack || 'No stack trace',
+          stack: err.stack || "No stack trace",
           rawError: JSON.stringify(err, Object.getOwnPropertyNames(err)),
         });
-        setError(`Failed to load data: ${err.message || 'Unknown error'}. Ensure the sheet is shared with 'Anyone with the link' (Viewer) and verify tab names.`);
+        setError(
+          `Failed to load data: ${err.message || "Unknown error"}. Ensure the sheet is shared with &apos;Anyone with the link&apos; (Viewer) and verify tab names.`
+        );
       } finally {
         setLoading(false);
       }
@@ -234,21 +236,21 @@ export default function Home() {
 
   const handleButtonClick = (key) => {
     setActiveSheet(key);
-    setView('table');
+    setView("table");
     setSelectedRow(null);
   };
 
   const handleRowClick = (row) => {
     setSelectedRow(row);
-    setView('detail');
+    setView("detail");
   };
 
   const handleBack = () => {
-    if (view === 'detail') {
-      setView('table');
+    if (view === "detail") {
+      setView("table");
       setSelectedRow(null);
-    } else if (view === 'table') {
-      setView('menu');
+    } else if (view === "table") {
+      setView("menu");
       setActiveSheet(null);
       setData([]);
       setSelectedRow(null);
@@ -269,15 +271,18 @@ export default function Home() {
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
       {/* Header */}
       <header className="bg-white shadow-sm sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-2 sm:px-4 lg:px-8 py-3 sm:py-4 flex justify-between items-center">
-          <div className="flex items-center space-x-2 sm:space-x-3">
-            <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-blue-900 dark:text-blue-800">
-              Maxwell
-              <span className="text-red-700 dark:text-red-800"> Stamp</span>
-              <span className="font-bold text-blue-900 dark:text-blue-800"> LTD.</span>
-            </h1>
+        <div className="max-w-7xl mx-auto px-2 sm:px-4 lg:px-8 py-3 sm:py-4 flex items-center justify-between">
+          <div className="flex items-center">
+            <img src="max.png" alt="Logo" className="h-8 sm:h-12 md:h-16" /> {/* Adjusted for better scaling */}
+            <div className="flex-grow flex items-center justify-center">
+              <h1 className="text-xl sm:text-2xl lg:text-4xl font-bold text-blue-900 dark:text-blue-800 text-center">
+                Project
+                <span className="text-red-700 dark:text-red-800"> Dashboard</span>
+                {/* <span className="font-bold text-blue-900 dark:text-blue-800"> LTD.</span> */}
+              </h1>
+            </div>
           </div>
-          {(view === 'table' || view === 'detail') && (
+          {(view === "table" || view === "detail") && (
             <button
               onClick={handleBack}
               className="flex items-center space-x-1 sm:space-x-2 px-2 py-1 sm:px-3 sm:py-2 rounded-lg bg-red-800 text-white hover:bg-red-900 focus:outline-none transition-all duration-200 shadow-md font-medium text-xs sm:text-sm"
@@ -290,7 +295,7 @@ export default function Home() {
         </div>
       </header>
       {/* Menu View (Buttons) */}
-      {view === 'menu' && (
+      {view === "menu" && (
         <div className="max-w-7xl mx-auto px-2 sm:px-4 lg:px-8 py-6 sm:py-8 flex flex-wrap justify-center gap-3 sm:gap-4">
           {Object.keys(SHEETS).map((key) => (
             <button
@@ -304,7 +309,7 @@ export default function Home() {
         </div>
       )}
       {/* Table View */}
-      {view === 'table' && (
+      {view === "table" && (
         <main className="max-w-7xl mx-auto px-2 sm:px-4 lg:px-8 py-4 sm:py-8">
           {loading && (
             <div className="flex justify-center items-center py-8">
@@ -320,7 +325,7 @@ export default function Home() {
                 <span className="text-red-600 mr-2 flex-shrink-0">⚠️</span>
                 <p className="text-red-800 text-sm sm:text-base flex-1">{error}</p>
               </div>
-              <p className="text-red-700 text-xs sm:text-sm mt-2">Ensure the sheet is shared with 'Anyone with the link' (Viewer) and verify tab names.</p>
+              <p className="text-red-700 text-xs sm:text-sm mt-2">Ensure the sheet is shared with &apos;Anyone with the link&apos; (Viewer) and verify tab names.</p>
             </div>
           )}
           {!loading && !error && data.length === 0 && (
@@ -346,7 +351,7 @@ export default function Home() {
                         onClick={() => handleRowClick(item)}
                         className="border-b border-gray-200 hover:bg-gray-50 transition-colors cursor-pointer"
                       >
-                        <td className="px-2 sm:px-4 lg:px-6 py-2 sm:py-3 text-gray-800 text-sm whitespace-normal break-words max-w-[150px] sm:max-w-none">{item["Project Name"]}</td>
+                        <td className="px-2 sm:px-4 lg:px-6 py-2 sm:py-3 text-gray-800 text-sm whitespace-normal break-words max-w-xs sm:max-w-none">{item["Project Name"]}</td>
                         <td className="px-2 sm:px-4 lg:px-6 py-2 sm:py-3 text-gray-600 text-sm whitespace-nowrap">{item["Deadline"]}</td>
                         <td className="px-2 sm:px-4 lg:px-6 py-2 sm:py-3 text-gray-600 text-sm whitespace-nowrap">{item["Country"]}</td>
                       </tr>
@@ -359,25 +364,24 @@ export default function Home() {
         </main>
       )}
       {/* Detail View */}
-      {view === 'detail' && selectedRow && (
-  <main className="max-w-7xl mx-auto px-2 sm:px-4 lg:px-8 py-4 sm:py-8">
-    <div className="bg-white rounded-xl shadow-lg p-4 sm:p-6">
-      <h2 className="text-xl sm:text-2xl font-bold text-gray-800 mb-4 sm:mb-6">Project Details: {selectedRow["Project Name"]}</h2>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4 overflow-x-auto">
-        {/* eslint-disable-next-line react/no-unescaped-entities */}
-        {currentFields.map((label) => (
-          <div key={label} className="flex items-start sm:items-center space-x-2 min-w-0">
-            <span className="text-indigo-600 font-medium whitespace-nowrap flex-shrink-0 text-sm sm:text-base min-w-fit">
-              {label}:
-            </span>
-            <span className="text-gray-700 flex-1 text-sm sm:text-base break-words hyphens-none">
-              {selectedRow[label]}
-            </span>
+      {view === "detail" && selectedRow && (
+        <main className="max-w-7xl mx-auto px-2 sm:px-4 lg:px-8 py-4 sm:py-8">
+          <div className="bg-white rounded-xl shadow-lg p-4 sm:p-6">
+            <h2 className="text-xl sm:text-2xl font-bold text-gray-800 mb-4 sm:mb-6">Project Details: {selectedRow["Project Name"]}</h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-4 overflow-x-auto">
+              {currentFields.map((label) => (
+                <div key={label} className="flex items-start space-x-2 mb-2 min-w-0">
+                  <span className="text-indigo-600 font-medium whitespace-nowrap flex-shrink-0 text-sm sm:text-base min-w-fit">
+                    {label}:
+                  </span>
+                  <span className="text-gray-700 flex-1 break-words hyphens-auto text-sm sm:text-base">
+                    {String(selectedRow[label] || "")}
+                  </span>
+                </div>
+              ))}
+            </div>
           </div>
-        ))}
-      </div>
-    </div>
-  </main>
+        </main>
       )}
     </div>
   );
