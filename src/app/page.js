@@ -271,20 +271,13 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
-      {/* Header */}
-      <header className="bg-white shadow-sm sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-2 sm:px-4 lg:px-8 py-3 sm:py-4 flex items-center justify-between">
-          <div className="flex items-center">
-            <img src="max.png" alt="Logo" className="h-10 sm:h-12 md:h-16" />
-            <div className="flex-grow flex items-center justify-center">
-              <h1 className="text-xl sm:text-5xl ml-9 sm:ml-9 sm:text-center lg:text-4xl font-bold text-blue-900 dark:text-blue-800 text-center">
-                Project
-                <span className="text-red-700 dark:text-red-800"> Dashboard</span>
-                {/* <span className="font-bold text-blue-900 dark:text-blue-800"> LTD.</span> */}
-              </h1>
+      {/* Fixed Navbar */}
+      {(view === "table" || view === "detail") && activeSheet && (
+        <nav className="bg-white shadow-md fixed top-0 left-0 w-full z-50 py-2 sm:py-3">
+          <div className="max-w-7xl mx-auto px-2 sm:px-4 lg:px-8 flex items-center justify-between">
+            <div className="flex items-center">
+              <img src="max.png" alt="Logo" className="h-10 sm:h-12 md:h-16 mr-2 sm:mr-4" />
             </div>
-          </div>
-          {(view === "table" || view === "detail") && (
             <button
               onClick={handleBack}
               className="flex items-center space-x-1 sm:space-x-2 px-2 py-1 sm:px-3 sm:py-2 rounded-lg bg-red-800 text-white hover:bg-red-900 focus:outline-none transition-all duration-200 shadow-md font-medium text-xs sm:text-sm"
@@ -293,115 +286,145 @@ export default function Home() {
               <span className="hidden sm:inline">Back</span>
               <span className="sm:hidden text-xs">Back</span>
             </button>
-          )}
-        </div>
-      </header>
-          <br></br>
-    
-      {/* Menu View (Buttons) */}
-      {view === "menu" && (
-        
-        <div className="max-w-7xl mx-auto px-2 sm:px-4 lg:px-8 py-6 sm:py-8 flex flex-wrap justify-center gap-7 sm:gap-6">
-          {Object.keys(SHEETS).map((key) => (
-            <button
-              key={key}
-              onClick={() => handleButtonClick(key)}
-              className="px-6 sm:px-8 py-3 sm:py-4 rounded-lg font-medium text-l sm:text-base transition-all duration-200 bg-blue-900 text-white hover:bg-blue-950 shadow-sm w-full sm:w-auto min-w-[200px] sm:min-w-0"
-            >
-              {buttonLabels[key]}
-            </button>
-          ))}
-        </div>
-      )}
-      {/* Table View */}
-      {view === "table" && (
-  <main className="max-w-7xl mx-auto px-2 sm:px-4 lg:px-8 py-4 sm:py-8">
-    {loading && (
-      <div className="flex justify-center items-center py-8">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-6 w-6 sm:h-8 sm:w-8 border-b-2 border-indigo-600 mx-auto mb-3 sm:mb-4"></div>
-          <p className="text-gray-600 text-sm sm:text-base">Loading data...</p>
-        </div>
-      </div>
-    )}
-    {error && (
-      <div className="bg-red-50 border border-red-200 rounded-lg p-3 sm:p-4 mb-4 sm:mb-6">
-        <div className="flex items-start sm:items-center">
-          <span className="text-red-600 mr-2 flex-shrink-0">⚠️</span>
-          <p className="text-red-800 text-sm sm:text-base flex-1">{error}</p>
-        </div>
-        <p className="text-red-700 text-xs sm:text-sm mt-2">Ensure the sheet is shared with &apos;Anyone with the link&apos; (Viewer) and verify tab names.</p>
-      </div>
-    )}
-    {!loading && !error && data.length === 0 && (
-      <div className="text-center py-12">
-        <p className="text-gray-500 text-lg sm:text-lg">No data available for this sheet.</p>
-      </div>
-    )}
-    {!loading && !error && data.length > 0 && (
-      <div className="bg-white rounded-xl shadow-lg overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full border-collapse min-w-[300px]">
-            <thead className="bg-blue-900 text-white">
-              <tr>
-                <th className="px-2 sm:px-4 py-2 sm:py-3 text-left text-xs sm:text-sm font-semibold whitespace-nowrap">Project Name</th>
-                <th className="px-2 sm:px-4 py-2 sm:py-3 text-left text-xs sm:text-sm font-semibold whitespace-nowrap">Deadline</th>
-                <th className="px-2 sm:px-4 py-2 sm:py-3 text-left text-xs sm:text-sm font-semibold whitespace-nowrap">Country</th>
-              </tr>
-            </thead>
-            <tbody>
-              {data.map((item, i) => (
-                <tr
-                  key={i}
-                  onClick={() => handleRowClick(item)}
-                  className="border-b border-gray-200 hover:bg-gray-50 transition-colors cursor-pointer"
-                >
-                  <td className="px-2 sm:px-4 py-2 sm:py-3 text-gray-800 text-sm whitespace-normal break-words flex-grow max-w-[60%] sm:max-w-none">
-                    {item["Project Name"]}
-                  </td>
-                  <td className="px-2 sm:px-4 py-2 sm:py-3 text-gray-600 text-sm whitespace-nowrap flex-shrink-0 w-[20%] sm:w-auto">
-                    {item["Deadline"]}
-                  </td>
-                  <td className="px-2 sm:px-4 py-2 sm:py-3 text-gray-600 text-sm">
-                    <div className="flex flex-col gap-1">
-                      {item["Country"]
-                        .split(",")
-                        .map((country, index) => (
-                          <span key={index} className="block">
-                            {country.trim()}
-                          </span>
-                        ))}
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </div>
-    )}
-  </main>
-)}
-      {/* Detail View */}
-      {view === "detail" && selectedRow && (
-        <main className="max-w-7xl mx-auto px-2 sm:px-4 lg:px-8 py-4 sm:py-8">
-          <div className="bg-white rounded-xl shadow-lg p-4 sm:p-6">
-            <h2 className="text-xl sm:text-2xl sm:text-center ml-28 sm:ml-24 font-bold text-red-800 mb-4 sm:mb-6">Project Details</h2>
-            <div className="space-y-4">
-              {currentFields.map((label) => (
-                <div key={label} className="flex flex-col space-y-1">
-                  <span className="font-medium whitespace-nowrap text-blue-800 text-m sm:text-base">
-                    {label}:
-                  </span>
-                  <span className="text-gray-700 flex-1 break-words hyphens-auto text-sm sm:text-base">
-                    {String(selectedRow[label] || "")}
-                  </span>
-                </div>
-              ))}
-            </div>
           </div>
-        </main>
+        </nav>
       )}
+
+      {/* Fixed Info Strip Below Navbar */}
+      {(view === "table" || view === "detail") && activeSheet && (
+        <div className="bg-gray-100 text-gray-700 text-center py-1 sm:py-2 fixed top-16 left-0 w-full z-40">
+          <span className="text-sm sm:text-base font-medium">
+            Current Section: {buttonLabels[activeSheet]}
+          </span>
+        </div>
+      )}
+
+      {/* Main Content with Conditional Padding */}
+      <div>
+        {/* Header (Visible only in Menu View) */}
+        {view === "menu" && (
+          <header className="bg-white shadow-sm">
+            <div className="max-w-7xl mx-auto px-2 sm:px-4 lg:px-8 py-3 sm:py-4 flex items-center justify-between">
+              <div className="flex items-center">
+                <img src="max.png" alt="Logo" className="h-10 sm:h-12 md:h-16" />
+                <div className="flex-grow flex items-center justify-center">
+                  <h1 className="text-xl sm:text-5xl ml-9 sm:ml-9 sm:text-center lg:text-4xl font-bold text-blue-900 dark:text-blue-800 text-center">
+                    Project
+                    <span className="text-red-700 dark:text-red-800"> Dashboard</span>
+                    {/* <span className="font-bold text-blue-900 dark:text-blue-800"> LTD.</span> */}
+                  </h1>
+                </div>
+              </div>
+            </div>
+          </header>
+        )}
+
+        {/* Menu View (Buttons) */}
+        {view === "menu" && (
+          <div className="max-w-7xl mx-auto px-2 sm:px-4 lg:px-8 py-6 sm:py-8 flex flex-wrap justify-center gap-7 sm:gap-6">
+            {Object.keys(SHEETS).map((key) => (
+              <button
+                key={key}
+                onClick={() => handleButtonClick(key)}
+                className="px-6 sm:px-8 py-3 sm:py-4 rounded-lg font-medium text-l sm:text-base transition-all duration-200 bg-blue-900 text-white hover:bg-blue-950 shadow-sm w-full sm:w-auto min-w-[200px] sm:min-w-0"
+              >
+                {buttonLabels[key]}
+              </button>
+            ))}
+          </div>
+        )}
+
+        {/* Table View with Padding */}
+        {view === "table" && (
+          <main className="max-w-7xl mx-auto px-2 sm:px-4 lg:px-8 py-4 sm:py-8 pt-24">
+            {loading && (
+              <div className="flex justify-center items-center py-8">
+                <div className="text-center">
+                  <div className="animate-spin rounded-full h-6 w-6 sm:h-8 sm:w-8 border-b-2 border-indigo-600 mx-auto mb-3 sm:mb-4"></div>
+                  <p className="text-gray-600 text-sm sm:text-base">Loading data...</p>
+                </div>
+              </div>
+            )}
+            {error && (
+              <div className="bg-red-50 border border-red-200 rounded-lg p-3 sm:p-4 mb-4 sm:mb-6">
+                <div className="flex items-start sm:items-center">
+                  <span className="text-red-600 mr-2 flex-shrink-0">⚠️</span>
+                  <p className="text-red-800 text-sm sm:text-base flex-1">{error}</p>
+                </div>
+                <p className="text-red-700 text-xs sm:text-sm mt-2">Ensure the sheet is shared with &apos;Anyone with the link&apos; (Viewer) and verify tab names.</p>
+              </div>
+            )}
+            {!loading && !error && data.length === 0 && (
+              <div className="text-center py-12">
+                <p className="text-gray-500 text-lg sm:text-lg">No data available for this sheet.</p>
+              </div>
+            )}
+            {!loading && !error && data.length > 0 && (
+              <div className="bg-white rounded-xl shadow-lg overflow-hidden">
+                <div className="overflow-x-auto">
+                  <table className="w-full border-collapse min-w-[300px]">
+                    <thead className="bg-blue-900 text-white">
+                      <tr>
+                        <th className="px-2 sm:px-4 py-2 sm:py-3 text-left text-xs sm:text-sm font-semibold whitespace-nowrap">Project Name</th>
+                        <th className="px-2 sm:px-4 py-2 sm:py-3 text-left text-xs sm:text-sm font-semibold whitespace-nowrap">Deadline</th>
+                        <th className="px-2 sm:px-4 py-2 sm:py-3 text-left text-xs sm:text-sm font-semibold whitespace-nowrap">Country</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {data.map((item, i) => (
+                        <tr
+                          key={i}
+                          onClick={() => handleRowClick(item)}
+                          className="border-b border-gray-200 hover:bg-gray-50 transition-colors cursor-pointer"
+                        >
+                          <td className="px-2 sm:px-4 py-2 sm:py-3 text-gray-800 text-sm whitespace-normal break-words flex-grow max-w-[60%] sm:max-w-none">
+                            {item["Project Name"]}
+                          </td>
+                          <td className="px-2 sm:px-4 py-2 sm:py-3 text-gray-600 text-sm whitespace-nowrap flex-shrink-0 w-[20%] sm:w-auto">
+                            {item["Deadline"]}
+                          </td>
+                          <td className="px-2 sm:px-4 py-2 sm:py-3 text-gray-600 text-sm">
+                            <div className="flex flex-col gap-1">
+                              {item["Country"]
+                                .split(",")
+                                .map((country, index) => (
+                                  <span key={index} className="block">
+                                    {country.trim()}
+                                  </span>
+                                ))}
+                            </div>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            )}
+          </main>
+        )}
+
+        {/* Detail View with Padding */}
+        {view === "detail" && selectedRow && (
+          <main className="max-w-7xl mx-auto px-2 sm:px-4 lg:px-8 py-4 sm:py-8 pt-24">
+            <div className="bg-white rounded-xl shadow-lg p-4 sm:p-6">
+              <h2 className="text-xl sm:text-2xl sm:text-center ml-28 sm:ml-24 font-bold text-red-800 mb-4 sm:mb-6">Project Details</h2>
+              <div className="space-y-4">
+                {currentFields.map((label) => (
+                  <div key={label} className="flex flex-col space-y-1">
+                    <span className="font-medium whitespace-nowrap text-blue-800 text-m sm:text-base">
+                      {label}:
+                    </span>
+                    <span className="text-gray-700 flex-1 break-words hyphens-auto text-sm sm:text-base">
+                      {String(selectedRow[label] || "")}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </main>
+        )}
+      </div>
     </div>
   );
 }
