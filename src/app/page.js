@@ -367,8 +367,12 @@ export default function Home() {
         {/* eslint-disable-next-line react/no-unescaped-entities */}
         {currentFields.map((label) => (
           <div key={label} className="flex items-start sm:items-center space-x-2 min-w-0">
-            <span className="text-indigo-600 font-medium whitespace-nowrap flex-shrink-0 text-sm sm:text-base min-w-fit">{label}:</span>
-            <span className="text-gray-700 flex-1 text-sm sm:text-base break-words hyphens-none">{selectedRow[label]}</span>
+            <span className="text-indigo-600 font-medium whitespace-nowrap flex-shrink-0 text-sm sm:text-base min-w-fit">
+              {label}:
+            </span>
+            <span className="text-gray-700 flex-1 text-sm sm:text-base break-words hyphens-none">
+              {selectedRow[label]}
+            </span>
           </div>
         ))}
       </div>
