@@ -363,9 +363,12 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
-      {/* Fixed Navbar */}
+      {/* Fixed Navbar with Forced White Background */}
       {(view === "table" || view === "detail") && activeSheet && (
-        <nav className="bg-white shadow-md fixed top-0 left-0 w-full z-50 py-2 sm:py-3">
+        <nav
+          className="bg-white shadow-md fixed top-0 left-0 w-full z-50 py-2 sm:py-3"
+          style={{ backgroundColor: '#ffffff' }} // Enforce white background
+        >
           <div className="max-w-7xl mx-auto px-2 sm:px-4 lg:px-8 flex items-center justify-between">
             <div className="flex items-center">
               <img src="max.png" alt="Logo" className="h-12 sm:h-12 md:h-18 mr-2 sm:mr-4" />
@@ -413,16 +416,16 @@ export default function Home() {
         {/* Menu View (Buttons) */}
         {view === "menu" && (
           <div className="max-w-7xl mx-auto px-2 sm:px-4 lg:px-8 py-6 sm:py-8 flex flex-wrap justify-center gap-7 sm:gap-6">
-            {Object.keys(SHEETS).map((key) => (
-              <button
-                key={key}
-                onClick={() => handleButtonClick(key)}
-                className="px-6 sm:px-8 py-3 sm:py-4 rounded-lg font-medium text-l sm:text-base transition-all duration-200 bg-blue-900 text-white hover:bg-blue-950 shadow-sm w-full sm:w-auto min-w-[200px] sm:min-w-0"
-              >
-                {buttonLabels[key]}
-              </button>
-            ))}
-          </div>
+          {Object.keys(SHEETS).map((key) => (
+            <button
+              key={key}
+              onClick={() => handleButtonClick(key)}
+              className="px-6 sm:px-8 py-3 sm:py-4 rounded-lg font-medium text-l sm:text-base transition-all duration-200 bg-blue-900 text-white hover:bg-blue-950 shadow-sm w-full sm:w-auto min-w-[200px] sm:min-w-0"
+            >
+              {buttonLabels[key]}
+            </button>
+          ))}
+        </div>
         )}
 
         {/* Table View with Padding */}
