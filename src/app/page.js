@@ -216,6 +216,42 @@ export default function Home() {
     setIsInitialLoad(false); // Mark initial load as complete
   }, []); // Run only on initial load
 
+  // Handle browser back/forward buttons
+  useEffect(() => {
+    const handlePopState = (event) => {
+      const urlParams = new URLSearchParams(window.location.search);
+      const savedView = urlParams.get('view');
+      const savedSheet = urlParams.get('sheet');
+      const savedRow = urlParams.get('row');
+
+      if (savedView) {
+        setView(savedView);
+        if (savedSheet) {
+          setActiveSheet(savedSheet);
+        }
+        if (savedRow && savedView === 'detail') {
+          try {
+            const rowData = JSON.parse(decodeURIComponent(savedRow));
+            setSelectedRow(rowData);
+          } catch (e) {
+            console.error('Failed to parse saved row data');
+          }
+        } else {
+          setSelectedRow(null);
+        }
+      } else {
+        setView("menu");
+        setActiveSheet(null);
+        setData([]);
+        setSelectedRow(null);
+      }
+    };
+
+    window.addEventListener('popstate', handlePopState);
+
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, []);
+
   useEffect(() => {
     if (!activeSheet || isInitialLoad) return;
     const fetchSheet = async () => {
@@ -336,7 +372,7 @@ export default function Home() {
             </div>
             <button
               onClick={handleBack}
-              className="flex items-center space-x-1 sm:space-x-2 px-2 py-1 sm:px-3 sm:py-2 rounded-lg bg-red-800 text-white hover:bg-red-900 focus:outline-none transition-all duration-200 shadow-md font-medium text-xs sm:text-sm"
+              className="flex items-center space-x-1 sm:space-x-2 px-3 py-2 sm:px-3 sm:py-2 rounded-lg bg-red-800 text-white hover:bg-red-900 focus:outline-none transition-all duration-200 shadow-md font-medium text-sm sm:text-sm"
             >
               <span className="text-sm sm:text-base lg:text-lg">←</span>
               <span className="hidden sm:inline">Back</span>
