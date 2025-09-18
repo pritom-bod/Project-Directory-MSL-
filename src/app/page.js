@@ -187,12 +187,37 @@ export default function Home() {
   const [activeSheet, setActiveSheet] = useState(null);
   const [data, setData] = useState([]);
   const [selectedRow, setSelectedRow] = useState(null);
-  const [view, setView] = useState("menu"); // 'menu', 'table', 'detail'
+  const [view, setView] = useState("menu"); // Initial state, will be overridden after URL check
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [isInitialLoad, setIsInitialLoad] = useState(true); // New state for initial load
+
+  // Restore state from URL on initial load
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const savedView = urlParams.get('view');
+    const savedSheet = urlParams.get('sheet');
+    const savedRow = urlParams.get('row');
+
+    if (savedView && savedView !== 'menu') {
+      setView(savedView);
+      if (savedSheet) {
+        setActiveSheet(savedSheet);
+      }
+      if (savedRow && savedView === 'detail') {
+        try {
+          const rowData = JSON.parse(decodeURIComponent(savedRow));
+          setSelectedRow(rowData);
+        } catch (e) {
+          console.error('Failed to parse saved row data');
+        }
+      }
+    }
+    setIsInitialLoad(false); // Mark initial load as complete
+  }, []); // Run only on initial load
 
   useEffect(() => {
-    if (!activeSheet) return;
+    if (!activeSheet || isInitialLoad) return;
     const fetchSheet = async () => {
       setLoading(true);
       setError(null);
@@ -234,28 +259,47 @@ export default function Home() {
     fetchSheet();
     const interval = setInterval(fetchSheet, 30000);
     return () => clearInterval(interval);
-  }, [activeSheet]);
+  }, [activeSheet, isInitialLoad]);
 
   const handleButtonClick = (key) => {
     setActiveSheet(key);
     setView("table");
     setSelectedRow(null);
+    const newUrl = new URL(window.location);
+    newUrl.searchParams.set('view', 'table');
+    newUrl.searchParams.set('sheet', key);
+    newUrl.searchParams.delete('row');
+    window.history.pushState({}, '', newUrl);
   };
 
   const handleRowClick = (row) => {
     setSelectedRow(row);
     setView("detail");
+    const newUrl = new URL(window.location);
+    newUrl.searchParams.set('view', 'detail');
+    newUrl.searchParams.set('sheet', activeSheet);
+    newUrl.searchParams.set('row', encodeURIComponent(JSON.stringify(row)));
+    window.history.pushState({}, '', newUrl);
   };
 
   const handleBack = () => {
     if (view === "detail") {
       setView("table");
       setSelectedRow(null);
+      const newUrl = new URL(window.location);
+      newUrl.searchParams.set('view', 'table');
+      newUrl.searchParams.delete('row');
+      window.history.pushState({}, '', newUrl);
     } else if (view === "table") {
       setView("menu");
       setActiveSheet(null);
       setData([]);
       setSelectedRow(null);
+      const newUrl = new URL(window.location);
+      newUrl.searchParams.delete('view');
+      newUrl.searchParams.delete('sheet');
+      newUrl.searchParams.delete('row');
+      window.history.pushState({}, '', newUrl);
     }
   };
 
@@ -268,6 +312,18 @@ export default function Home() {
   };
 
   const currentFields = fieldLabelsMap[activeSheet] || allFields;
+
+  // Only render content after initial load is complete
+  if (isInitialLoad) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mx-auto mb-4"></div>
+          <p className="text-gray-600 text-lg">Loading...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
@@ -306,12 +362,11 @@ export default function Home() {
           <header className="bg-white shadow-sm">
             <div className="max-w-7xl mx-auto px-2 sm:px-4 lg:px-8 py-3 sm:py-4 flex items-center justify-between">
               <div className="flex items-center">
-                <img src="max.png" alt="Logo" className="h-10 sm:h-12 md:h-16" />
+                <img src="max.png" alt="Logo" className="h-12 sm:h-12 md:h-18" />
                 <div className="flex-grow flex items-center justify-center">
                   <h1 className="text-xl sm:text-5xl ml-9 sm:ml-9 sm:text-center lg:text-4xl font-bold text-blue-900 dark:text-blue-800 text-center">
                     Project
                     <span className="text-red-700 dark:text-red-800"> Dashboard</span>
-                    {/* <span className="font-bold text-blue-900 dark:text-blue-800"> LTD.</span> */}
                   </h1>
                 </div>
               </div>
