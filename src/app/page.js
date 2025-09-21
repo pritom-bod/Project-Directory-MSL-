@@ -123,7 +123,6 @@ const proposalEvaluationFields = [
 ];
 
 const fieldLabelsMap = {
-  Home: allFields,
   ProposalPrep: proposalPreparationFields,
   EoiPrep: eoiPreparationFields,
   EoiEval: eoiEvaluationFields,
@@ -187,10 +186,12 @@ export default function Home() {
   const [activeSheet, setActiveSheet] = useState(null);
   const [data, setData] = useState([]);
   const [selectedRow, setSelectedRow] = useState(null);
-  const [view, setView] = useState("menu"); // Initial state, will be overridden after URL check
+  const [view, setView] = useState("menu");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [isInitialLoad, setIsInitialLoad] = useState(true); // New state for initial load
+  const [isInitialLoad, setIsInitialLoad] = useState(true);
+  const [sortByDeadline, setSortByDeadline] = useState(false);
+  const [sortByCountry, setSortByCountry] = useState(false); // New state for country sorting
 
   // Restore state from URL on initial load
   useEffect(() => {
@@ -213,8 +214,8 @@ export default function Home() {
         }
       }
     }
-    setIsInitialLoad(false); // Mark initial load as complete
-  }, []); // Run only on initial load
+    setIsInitialLoad(false);
+  }, []);
 
   // Handle browser back/forward buttons
   useEffect(() => {
@@ -244,6 +245,8 @@ export default function Home() {
         setActiveSheet(null);
         setData([]);
         setSelectedRow(null);
+        setSortByDeadline(false);
+        setSortByCountry(false); // Reset country sorting
       }
     };
 
@@ -301,6 +304,8 @@ export default function Home() {
     setActiveSheet(key);
     setView("table");
     setSelectedRow(null);
+    setSortByDeadline(false);
+    setSortByCountry(false); // Reset country sorting
     const newUrl = new URL(window.location);
     newUrl.searchParams.set('view', 'table');
     newUrl.searchParams.set('sheet', key);
@@ -331,6 +336,8 @@ export default function Home() {
       setActiveSheet(null);
       setData([]);
       setSelectedRow(null);
+      setSortByDeadline(false);
+      setSortByCountry(false); // Reset country sorting
       const newUrl = new URL(window.location);
       newUrl.searchParams.delete('view');
       newUrl.searchParams.delete('sheet');
@@ -339,8 +346,17 @@ export default function Home() {
     }
   };
 
+  const handleSortByDeadline = () => {
+    setSortByDeadline(!sortByDeadline);
+    setSortByCountry(false); // Disable country sorting when deadline sorting is toggled
+  };
+
+  const handleSortByCountry = () => {
+    setSortByCountry(!sortByCountry);
+    setSortByDeadline(false); // Disable deadline sorting when country sorting is toggled
+  };
+
   const buttonLabels = {
-    Home: "All Projects",
     ProposalPrep: "Proposal Preparation",
     EoiPrep: "EOI Preparation",
     EoiEval: "EOI Evaluation",
@@ -349,7 +365,33 @@ export default function Home() {
 
   const currentFields = fieldLabelsMap[activeSheet] || allFields;
 
-  // Only render content after initial load is complete
+  // Sort data based on active sorting state
+  const today = new Date();
+  const sortedData = sortByDeadline
+    ? [...data].sort((a, b) => {
+        const dateA = new Date(a["Deadline"].split(" ").reverse().join("-"));
+        const dateB = new Date(b["Deadline"].split(" ").reverse().join("-"));
+        if (isNaN(dateA.getTime())) return 1;
+        if (isNaN(dateB.getTime())) return -1;
+        const diffA = Math.abs(dateA - today);
+        const diffB = Math.abs(dateB - today);
+        return diffA - diffB; // Nearest to furthest
+      })
+    : sortByCountry
+    ? [...data].sort((a, b) => {
+        // Get the first country from the comma-separated list
+        const countryA = a["Country"].split(",")[0]?.trim() || "";
+        const countryB = b["Country"].split(",")[0]?.trim() || "";
+        // Handle empty or invalid countries by pushing them to the end
+        if (!countryA) return 1;
+        if (!countryB) return -1;
+        // Compare first letter of the first country (case-insensitive)
+        const firstLetterA = countryA.charAt(0).toLowerCase();
+        const firstLetterB = countryB.charAt(0).toLowerCase();
+        return firstLetterA.localeCompare(firstLetterB);
+      })
+    : data;
+
   if (isInitialLoad) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100">
@@ -363,12 +405,8 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
-      {/* Fixed Navbar with Forced White Background */}
       {(view === "table" || view === "detail") && activeSheet && (
-        <nav
-          className="bg-white shadow-md fixed top-0 left-0 w-full z-50 py-2 sm:py-3"
-          style={{ backgroundColor: '#ffffff' }} // Enforce white background
-        >
+        <nav className="bg-white shadow-md fixed top-0 left-0 w-full z-50 py-2 sm:py-3">
           <div className="max-w-7xl mx-auto px-2 sm:px-4 lg:px-8 flex items-center justify-between">
             <div className="flex items-center">
               <img src="max.png" alt="Logo" className="h-12 sm:h-12 md:h-18 mr-2 sm:mr-4" />
@@ -385,7 +423,6 @@ export default function Home() {
         </nav>
       )}
 
-      {/* Fixed Info Strip Below Navbar */}
       {(view === "table" || view === "detail") && activeSheet && (
         <div className="bg-gray-100 text-gray-700 text-center py-1 sm:py-2 fixed top-16 left-0 w-full z-40">
           <span className="text-sm sm:text-base font-medium">
@@ -394,9 +431,7 @@ export default function Home() {
         </div>
       )}
 
-      {/* Main Content with Conditional Padding */}
       <div>
-        {/* Header (Visible only in Menu View) */}
         {view === "menu" && (
           <header className="bg-white shadow-sm">
             <div className="max-w-7xl mx-auto px-2 sm:px-4 lg:px-8 py-3 sm:py-4 flex items-center justify-between">
@@ -413,22 +448,20 @@ export default function Home() {
           </header>
         )}
 
-        {/* Menu View (Buttons) */}
         {view === "menu" && (
           <div className="max-w-7xl mx-auto px-2 sm:px-4 lg:px-8 py-6 sm:py-8 flex flex-wrap justify-center gap-7 sm:gap-6">
-          {Object.keys(SHEETS).map((key) => (
-            <button
-              key={key}
-              onClick={() => handleButtonClick(key)}
-              className="px-6 sm:px-8 py-3 sm:py-4 rounded-lg font-medium text-l sm:text-base transition-all duration-200 bg-blue-900 text-white hover:bg-blue-950 shadow-sm w-full sm:w-auto min-w-[200px] sm:min-w-0"
-            >
-              {buttonLabels[key]}
-            </button>
-          ))}
-        </div>
+            {Object.keys(SHEETS).map((key) => (
+              <button
+                key={key}
+                onClick={() => handleButtonClick(key)}
+                className="px-6 sm:px-8 py-3 sm:py-4 rounded-lg font-medium text-l sm:text-base transition-all duration-200 bg-blue-900 text-white hover:bg-blue-950 shadow-sm w-full sm:w-auto min-w-[200px] sm:min-w-0"
+              >
+                {buttonLabels[key]}
+              </button>
+            ))}
+          </div>
         )}
 
-        {/* Table View with Padding */}
         {view === "table" && (
           <main className="max-w-7xl mx-auto px-2 sm:px-4 lg:px-8 py-4 sm:py-8 pt-24">
             {loading && (
@@ -460,12 +493,22 @@ export default function Home() {
                     <thead className="bg-blue-900 text-white">
                       <tr>
                         <th className="px-2 sm:px-4 py-2 sm:py-3 text-left text-xs sm:text-sm font-semibold whitespace-nowrap">Project Name</th>
-                        <th className="px-2 sm:px-4 py-2 sm:py-3 text-left text-xs sm:text-sm font-semibold whitespace-nowrap">Deadline</th>
-                        <th className="px-2 sm:px-4 py-2 sm:py-3 text-left text-xs sm:text-sm font-semibold whitespace-nowrap">Country</th>
+                        <th
+                          onClick={handleSortByDeadline}
+                          className="px-2 sm:px-4 py-2 sm:py-3 text-left text-xs sm:text-sm font-semibold whitespace-nowrap cursor-pointer hover:bg-blue-950 transition-colors"
+                        >
+                          Deadline {sortByDeadline ? "↓" : ""}
+                        </th>
+                        <th
+                          onClick={handleSortByCountry}
+                          className="px-2 sm:px-4 py-2 sm:py-3 text-left text-xs sm:text-sm font-semibold whitespace-nowrap cursor-pointer hover:bg-blue-950 transition-colors"
+                        >
+                          Country {sortByCountry ? "↓" : ""}
+                        </th>
                       </tr>
                     </thead>
                     <tbody>
-                      {data.map((item, i) => (
+                      {sortedData.map((item, i) => (
                         <tr
                           key={i}
                           onClick={() => handleRowClick(item)}
@@ -498,7 +541,6 @@ export default function Home() {
           </main>
         )}
 
-        {/* Detail View with Padding */}
         {view === "detail" && selectedRow && (
           <main className="max-w-7xl mx-auto px-2 sm:px-4 lg:px-8 py-4 sm:py-8 pt-24">
             <div className="bg-white rounded-xl shadow-lg p-4 sm:p-6">
