@@ -6,6 +6,7 @@ const SHEETS = {
   EoiPrep: "https://docs.google.com/spreadsheets/d/1jAH2IlhBqZCwRBVJRogC-YX1v9sVxW1iWI_jy3azv_8/gviz/tq?tqx=out:json&gid=1699098666",
   EoiEval: "https://docs.google.com/spreadsheets/d/1jAH2IlhBqZCwRBVJRogC-YX1v9sVxW1iWI_jy3azv_8/gviz/tq?tqx=out:json&gid=767379216",
   ProposalEval: "https://docs.google.com/spreadsheets/d/1jAH2IlhBqZCwRBVJRogC-YX1v9sVxW1iWI_jy3azv_8/gviz/tq?tqx=out:json&gid=1529072389",
+  // Home: "https://docs.google.com/spreadsheets/d/1jAH2IlhBqZCwRBVJRogC-YX1v9sVxW1iWI_jy3azv_8/gviz/tq?tqx=out:json&gid=0",
 };
 
 const allFields = [
@@ -191,6 +192,7 @@ export default function Home() {
   const [isInitialLoad, setIsInitialLoad] = useState(true);
   const [sortByDeadline, setSortByDeadline] = useState(false);
   const [sortByCountry, setSortByCountry] = useState(false);
+  const [isVisible, setIsVisible] = useState(false); // New state for button visibility
 
   // Restore state from URL on initial load
   useEffect(() => {
@@ -251,6 +253,16 @@ export default function Home() {
 
     window.addEventListener('popstate', handlePopState);
     return () => window.removeEventListener('popstate', handlePopState);
+  }, []);
+
+  // Handle scroll event to show/hide button
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsVisible(window.scrollY > 100); // Show button if scrolled more than 100px
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   useEffect(() => {
@@ -354,6 +366,10 @@ export default function Home() {
     setSortByDeadline(false);
   };
 
+  const handleScrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
   const buttonLabels = {
     ProposalPrep: "Proposal Preparation",
     EoiPrep: "EOI Preparation",
@@ -399,7 +415,7 @@ export default function Home() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 relative">
       {(view === "table" || view === "detail") && activeSheet && (
         <nav className="bg-white shadow-md fixed top-0 left-0 w-full z-50 py-2">
           <div className="max-w-7xl mx-auto px-2 flex items-center justify-between">
@@ -556,6 +572,15 @@ export default function Home() {
           </main>
         )}
       </div>
+      {isVisible && (
+        <button
+          onClick={handleScrollToTop}
+          className="fixed bottom-6 right-6 bg-gradient-to-r from-blue-600 to-indigo-400 text-white p-3 rounded-full shadow-lg hover:from-blue-900 hover:to-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all duration-200 flex items-center justify-center w-12 h-12"
+          aria-label="Back to Top"
+        >
+          ↑
+        </button>
+      )}
     </div>
   );
 }
