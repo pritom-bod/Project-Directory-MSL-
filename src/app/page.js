@@ -2,7 +2,6 @@
 import { useEffect, useState } from "react";
 
 const SHEETS = {
-  // Home: "https://docs.google.com/spreadsheets/d/1jAH2IlhBqZCwRBVJRogC-YX1v9sVxW1iWI_jy3azv_8/gviz/tq?tqx=out:json&gid=0",
   ProposalPrep: "https://docs.google.com/spreadsheets/d/1jAH2IlhBqZCwRBVJRogC-YX1v9sVxW1iWI_jy3azv_8/gviz/tq?tqx=out:json&gid=1334009693",
   EoiPrep: "https://docs.google.com/spreadsheets/d/1jAH2IlhBqZCwRBVJRogC-YX1v9sVxW1iWI_jy3azv_8/gviz/tq?tqx=out:json&gid=1699098666",
   EoiEval: "https://docs.google.com/spreadsheets/d/1jAH2IlhBqZCwRBVJRogC-YX1v9sVxW1iWI_jy3azv_8/gviz/tq?tqx=out:json&gid=767379216",
@@ -191,7 +190,7 @@ export default function Home() {
   const [error, setError] = useState(null);
   const [isInitialLoad, setIsInitialLoad] = useState(true);
   const [sortByDeadline, setSortByDeadline] = useState(false);
-  const [sortByCountry, setSortByCountry] = useState(false); // New state for country sorting
+  const [sortByCountry, setSortByCountry] = useState(false);
 
   // Restore state from URL on initial load
   useEffect(() => {
@@ -246,12 +245,11 @@ export default function Home() {
         setData([]);
         setSelectedRow(null);
         setSortByDeadline(false);
-        setSortByCountry(false); // Reset country sorting
+        setSortByCountry(false);
       }
     };
 
     window.addEventListener('popstate', handlePopState);
-
     return () => window.removeEventListener('popstate', handlePopState);
   }, []);
 
@@ -305,7 +303,7 @@ export default function Home() {
     setView("table");
     setSelectedRow(null);
     setSortByDeadline(false);
-    setSortByCountry(false); // Reset country sorting
+    setSortByCountry(false);
     const newUrl = new URL(window.location);
     newUrl.searchParams.set('view', 'table');
     newUrl.searchParams.set('sheet', key);
@@ -337,7 +335,7 @@ export default function Home() {
       setData([]);
       setSelectedRow(null);
       setSortByDeadline(false);
-      setSortByCountry(false); // Reset country sorting
+      setSortByCountry(false);
       const newUrl = new URL(window.location);
       newUrl.searchParams.delete('view');
       newUrl.searchParams.delete('sheet');
@@ -348,12 +346,12 @@ export default function Home() {
 
   const handleSortByDeadline = () => {
     setSortByDeadline(!sortByDeadline);
-    setSortByCountry(false); // Disable country sorting when deadline sorting is toggled
+    setSortByCountry(false);
   };
 
   const handleSortByCountry = () => {
     setSortByCountry(!sortByCountry);
-    setSortByDeadline(false); // Disable deadline sorting when country sorting is toggled
+    setSortByDeadline(false);
   };
 
   const buttonLabels = {
@@ -375,17 +373,14 @@ export default function Home() {
         if (isNaN(dateB.getTime())) return -1;
         const diffA = Math.abs(dateA - today);
         const diffB = Math.abs(dateB - today);
-        return diffA - diffB; // Nearest to furthest
+        return diffA - diffB;
       })
     : sortByCountry
     ? [...data].sort((a, b) => {
-        // Get the first country from the comma-separated list
         const countryA = a["Country"].split(",")[0]?.trim() || "";
         const countryB = b["Country"].split(",")[0]?.trim() || "";
-        // Handle empty or invalid countries by pushing them to the end
         if (!countryA) return 1;
         if (!countryB) return -1;
-        // Compare first letter of the first country (case-insensitive)
         const firstLetterA = countryA.charAt(0).toLowerCase();
         const firstLetterB = countryB.charAt(0).toLowerCase();
         return firstLetterA.localeCompare(firstLetterB);
@@ -406,16 +401,16 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
       {(view === "table" || view === "detail") && activeSheet && (
-        <nav className="bg-white shadow-md fixed top-0 left-0 w-full z-50 py-2 sm:py-3">
-          <div className="max-w-7xl mx-auto px-2 sm:px-4 lg:px-8 flex items-center justify-between">
+        <nav className="bg-white shadow-md fixed top-0 left-0 w-full z-50 py-2">
+          <div className="max-w-7xl mx-auto px-2 flex items-center justify-between">
             <div className="flex items-center">
-              <img src="max.png" alt="Logo" className="h-12 sm:h-12 md:h-18 mr-2 sm:mr-4" />
+              <img src="max.png" alt="Logo" className="h-12 mr-2" />
             </div>
             <button
               onClick={handleBack}
-              className="flex items-center space-x-1 sm:space-x-2 px-3 py-2 sm:px-3 sm:py-2 rounded-lg bg-red-800 text-white hover:bg-red-900 focus:outline-none transition-all duration-200 shadow-md font-medium text-sm sm:text-sm"
+              className="flex items-center space-x-1 px-3 py-2 rounded-lg bg-red-800 text-white hover:bg-red-900 focus:outline-none transition-all duration-200 shadow-md font-medium text-sm mx-2"
             >
-              <span className="text-sm sm:text-base lg:text-lg">←</span>
+              <span className="text-sm">←</span>
               <span className="hidden sm:inline">Back</span>
               <span className="sm:hidden text-xs">Back</span>
             </button>
@@ -424,8 +419,8 @@ export default function Home() {
       )}
 
       {(view === "table" || view === "detail") && activeSheet && (
-        <div className="bg-gray-100 text-gray-700 text-center py-1 sm:py-2 fixed top-16 left-0 w-full z-40">
-          <span className="text-sm sm:text-base font-medium">
+        <div className="bg-gray-100 text-gray-700 text-center py-1 fixed top-16 left-0 w-full z-40">
+          <span className="text-sm font-medium">
             Current Section: {buttonLabels[activeSheet]}
           </span>
         </div>
@@ -434,11 +429,11 @@ export default function Home() {
       <div>
         {view === "menu" && (
           <header className="bg-white shadow-sm">
-            <div className="max-w-7xl mx-auto px-2 sm:px-4 lg:px-8 py-3 sm:py-4 flex items-center justify-between">
+            <div className="max-w-7xl mx-auto px-2 py-3 flex items-center justify-between">
               <div className="flex items-center">
-                <img src="max.png" alt="Logo" className="h-12 sm:h-12 md:h-18" />
+                <img src="max.png" alt="Logo" className="h-12" />
                 <div className="flex-grow flex items-center justify-center">
-                  <h1 className="text-xl sm:text-5xl ml-9 sm:ml-9 sm:text-center lg:text-4xl font-bold text-blue-900 dark:text-blue-800 text-center">
+                  <h1 className="text-xl ml-9 text-center font-bold text-blue-900 dark:text-blue-800">
                     Project
                     <span className="text-red-700 dark:text-red-800"> Dashboard</span>
                   </h1>
@@ -449,12 +444,12 @@ export default function Home() {
         )}
 
         {view === "menu" && (
-          <div className="max-w-7xl mx-auto px-2 sm:px-4 lg:px-8 py-6 sm:py-8 flex flex-wrap justify-center gap-7 sm:gap-6">
+          <div className="max-w-7xl mx-auto px-2 py-6 flex flex-wrap justify-center gap-7">
             {Object.keys(SHEETS).map((key) => (
               <button
                 key={key}
                 onClick={() => handleButtonClick(key)}
-                className="px-6 sm:px-8 py-3 sm:py-4 rounded-lg font-medium text-l sm:text-base transition-all duration-200 bg-blue-900 text-white hover:bg-blue-950 shadow-sm w-full sm:w-auto min-w-[200px] sm:min-w-0"
+                className="px-6 py-3 rounded-lg font-medium text-l transition-all duration-200 bg-blue-900 text-white hover:bg-blue-950 shadow-sm w-full min-w-[200px] mx-2"
               >
                 {buttonLabels[key]}
               </button>
@@ -463,50 +458,50 @@ export default function Home() {
         )}
 
         {view === "table" && (
-          <main className="max-w-7xl mx-auto px-2 sm:px-4 lg:px-8 py-4 sm:py-8 pt-24">
+          <main className="max-w-7xl mx-auto px-2 py-4 pt-32">
             {loading && (
               <div className="flex justify-center items-center py-8">
                 <div className="text-center">
-                  <div className="animate-spin rounded-full h-6 w-6 sm:h-8 sm:w-8 border-b-2 border-indigo-600 mx-auto mb-3 sm:mb-4"></div>
-                  <p className="text-gray-600 text-sm sm:text-base">Loading data...</p>
+                  <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-indigo-600 mx-auto mb-3"></div>
+                  <p className="text-gray-600 text-sm">Loading data...</p>
                 </div>
               </div>
             )}
             {error && (
-              <div className="bg-red-50 border border-red-200 rounded-lg p-3 sm:p-4 mb-4 sm:mb-6">
-                <div className="flex items-start sm:items-center">
+              <div className="bg-red-50 border border-red-200 rounded-lg p-3 mb-4 mx-2">
+                <div className="flex items-start">
                   <span className="text-red-600 mr-2 flex-shrink-0">⚠️</span>
-                  <p className="text-red-800 text-sm sm:text-base flex-1">{error}</p>
+                  <p className="text-red-800 text-sm flex-1">{error}</p>
                 </div>
-                <p className="text-red-700 text-xs sm:text-sm mt-2">Ensure the sheet is shared with &apos;Anyone with the link&apos; (Viewer) and verify tab names.</p>
+                <p className="text-red-700 text-xs mt-2">Ensure the sheet is shared with &apos;Anyone with the link&apos; (Viewer) and verify tab names.</p>
               </div>
             )}
             {!loading && !error && data.length === 0 && (
-              <div className="text-center py-12">
-                <p className="text-gray-500 text-lg sm:text-lg">No data available for this sheet.</p>
+              <div className="text-center py-12 mx-2">
+                <p className="text-gray-500 text-lg">No data available for this sheet.</p>
               </div>
             )}
             {!loading && !error && data.length > 0 && (
-              <div className="bg-white rounded-xl shadow-lg overflow-hidden">
+              <div className="bg-white rounded-xl shadow-lg overflow-hidden mx-2">
                 <div className="overflow-x-auto">
                   <table className="w-full border-collapse min-w-[300px]">
-                    <thead className="bg-blue-900 text-white">
-                      <tr>
-                        <th className="px-2 sm:px-4 py-2 sm:py-3 text-left text-xs sm:text-sm font-semibold whitespace-nowrap">Project Name</th>
-                        <th
-                          onClick={handleSortByDeadline}
-                          className="px-2 sm:px-4 py-2 sm:py-3 text-left text-xs sm:text-sm font-semibold whitespace-nowrap cursor-pointer hover:bg-blue-950 transition-colors"
-                        >
-                          Deadline {sortByDeadline ? "↓" : ""}
-                        </th>
-                        <th
-                          onClick={handleSortByCountry}
-                          className="px-2 sm:px-4 py-2 sm:py-3 text-left text-xs sm:text-sm font-semibold whitespace-nowrap cursor-pointer hover:bg-blue-950 transition-colors"
-                        >
-                          Country {sortByCountry ? "↓" : ""}
-                        </th>
-                      </tr>
-                    </thead>
+                    <thead className="bg-blue-900 text-white sticky top-0 z-40"><tr>
+                      <th className="px-2 py-2 text-left text-xs font-semibold whitespace-nowrap">
+                        Project Name
+                      </th>
+                      <th
+                        onClick={handleSortByDeadline}
+                        className="px-2 py-2 text-left text-xs font-semibold whitespace-nowrap cursor-pointer hover:bg-blue-950 transition-colors"
+                      >
+                        Deadline {sortByDeadline ? "↓" : ""}
+                      </th>
+                      <th
+                        onClick={handleSortByCountry}
+                        className="px-2 py-2 text-left text-xs font-semibold whitespace-nowrap cursor-pointer hover:bg-blue-950 transition-colors"
+                      >
+                        Country {sortByCountry ? "↓" : ""}
+                      </th>
+                    </tr></thead>
                     <tbody>
                       {sortedData.map((item, i) => (
                         <tr
@@ -514,13 +509,13 @@ export default function Home() {
                           onClick={() => handleRowClick(item)}
                           className="border-b border-gray-200 hover:bg-gray-50 transition-colors cursor-pointer"
                         >
-                          <td className="px-2 sm:px-4 py-2 sm:py-3 text-gray-800 text-sm whitespace-normal break-words flex-grow max-w-[60%] sm:max-w-none">
+                          <td className="px-2 py-2 text-gray-800 text-sm whitespace-normal break-words flex-grow max-w-[60%]">
                             {item["Project Name"]}
                           </td>
-                          <td className="px-2 sm:px-4 py-2 sm:py-3 text-gray-600 text-sm whitespace-nowrap flex-shrink-0 w-[20%] sm:w-auto">
+                          <td className="px-2 py-2 text-gray-600 text-sm whitespace-nowrap flex-shrink-0 w-[20%]">
                             {item["Deadline"]}
                           </td>
-                          <td className="px-2 sm:px-4 py-2 sm:py-3 text-gray-600 text-sm">
+                          <td className="px-2 py-2 text-gray-600 text-sm w-[20%]">
                             <div className="flex flex-col gap-1">
                               {item["Country"]
                                 .split(",")
@@ -542,16 +537,16 @@ export default function Home() {
         )}
 
         {view === "detail" && selectedRow && (
-          <main className="max-w-7xl mx-auto px-2 sm:px-4 lg:px-8 py-4 sm:py-8 pt-24">
-            <div className="bg-white rounded-xl shadow-lg p-4 sm:p-6">
-              <h2 className="text-xl sm:text-2xl sm:text-center ml-28 sm:ml-24 font-bold text-red-800 mb-4 sm:mb-6">Project Details</h2>
+          <main className="max-w-7xl mx-auto px-2 py-4 pt-32">
+            <div className="bg-white rounded-xl shadow-lg p-4 mx-2">
+              <h2 className="text-xl text-center ml-28 font-bold text-red-800 mb-4">Project Details</h2>
               <div className="space-y-4">
                 {currentFields.map((label) => (
-                  <div key={label} className="flex flex-col space-y-1">
-                    <span className="font-medium whitespace-nowrap text-blue-800 text-m sm:text-base">
+                  <div key={label} className="flex flex-col space-y-1 mx-2">
+                    <span className="font-medium whitespace-nowrap text-blue-800 text-m">
                       {label}:
                     </span>
-                    <span className="text-gray-700 flex-1 break-words hyphens-auto text-sm sm:text-base">
+                    <span className="text-gray-700 flex-1 break-words hyphens-auto text-sm">
                       {String(selectedRow[label] || "")}
                     </span>
                   </div>
